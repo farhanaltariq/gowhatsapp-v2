@@ -1,0 +1,118 @@
+basePath: /api
+definitions:
+  common.ResponseMessage:
+    properties:
+      code:
+        type: integer
+      error:
+        type: boolean
+      message:
+        type: string
+    type: object
+  models.AuthenticationResponse:
+    properties:
+      access_token:
+        type: string
+      expired_at:
+        type: string
+      refresh_token:
+        type: string
+      status:
+        type: string
+    type: object
+  models.Login:
+    properties:
+      password:
+        type: string
+      usernameOrEmail:
+        type: string
+    type: object
+  models.Register:
+    properties:
+      confirmPassword:
+        type: string
+      country:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: fiber@swagger.io
+    name: API Support
+  description: This is a sample swagger for Fiber
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Fiber Boilerplate API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login
+      parameters:
+      - description: Login Data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthenticationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ResponseMessage'
+      security:
+      - Authorization: []
+      summary: Login
+      tags:
+      - Authentication
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user
+      parameters:
+      - description: Register data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.Register'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.ResponseMessage'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ResponseMessage'
+      summary: Register
+      tags:
+      - Authentication
+schemes:
+- http
+- https
+securityDefinitions:
+  Authorization:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
