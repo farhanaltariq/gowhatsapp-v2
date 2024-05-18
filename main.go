@@ -6,8 +6,13 @@ package main
 import (
 	"log"
 
+	"os"
+	"os/signal"
+	"syscall"
+
 	db "github.com/farhanaltariq/fiberplate/database"
 	_ "github.com/farhanaltariq/fiberplate/docs"
+	"github.com/farhanaltariq/fiberplate/libs/whatsapp"
 	"github.com/farhanaltariq/fiberplate/middleware"
 	"github.com/farhanaltariq/fiberplate/routes"
 	utils "github.com/farhanaltariq/fiberplate/utils"
@@ -15,6 +20,9 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/swagger"
 	"github.com/sirupsen/logrus"
+
+	_ "github.com/lib/pq"
+	_ "modernc.org/sqlite"
 )
 
 var (
@@ -65,11 +73,17 @@ func main() {
 
 	app := SetupApp()
 
+	// Use a channel to receive signals for graceful shutdown
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+
 	go func() {
 		if err := app.Listen(BaseUrl); err != nil {
 			logrus.Errorln(err)
 		}
 	}()
 
-	select {}
+	go whatsapp.Init()
+
+	<-stop // Wait for the stop signal
 }
