@@ -30,6 +30,8 @@ var (
 )
 
 func SetupApp() *fiber.App {
+	whatsapp.Init()
+
 	app := fiber.New(
 		fiber.Config{
 			Prefork:           false,
@@ -82,8 +84,6 @@ func main() {
 			logrus.Errorln(err)
 		}
 	}()
-
-	go whatsapp.Init()
 
 	<-stop // Wait for the stop signal
 }

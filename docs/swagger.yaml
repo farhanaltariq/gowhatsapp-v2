@@ -27,6 +27,13 @@ definitions:
       usernameOrEmail:
         type: string
     type: object
+  models.Message:
+    properties:
+      message:
+        type: string
+      number:
+        type: integer
+    type: object
   models.Register:
     properties:
       confirmPassword:
@@ -107,6 +114,32 @@ paths:
       summary: Register
       tags:
       - Authentication
+  /message:
+    post:
+      consumes:
+      - application/json
+      description: Send New Message to Desired Number
+      parameters:
+      - description: Message data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/models.Message'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/common.ResponseMessage'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ResponseMessage'
+      summary: Send Message
+      tags:
+      - Message
 schemes:
 - http
 - https

@@ -12,6 +12,8 @@ import (
 	waLog "go.mau.fi/whatsmeow/util/log"
 )
 
+var client *whatsmeow.Client
+
 func ConnectDB(client *whatsmeow.Client) error {
 	var err error
 	if client.Store.ID == nil {
@@ -70,25 +72,24 @@ func Init() {
 
 	clientLog := waLog.Stdout("Client", "DEBUG", true)
 	client := whatsmeow.NewClient(deviceStore, clientLog)
-	// defer client.Disconnect()
 
-	// Use a channel to receive signals for graceful shutdown
-	// stop := make(chan os.Signal, 1)
-	// signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+	err = ConnectDB(client)
+	if err != nil {
+		panic(err)
+	}
 
-	// Start the database connection concurrently
-	go func() {
-		err = ConnectDB(client)
-		if err != nil {
-			panic(err)
-		}
-	}()
+	client.AddEventHandler(func(evt interface{}) {
+		// set to true to not send result to client
+		EventHandler(client, evt, false)
+	})
 
-	// Start the event handling concurrently
-	go func() {
-		client.AddEventHandler(func(evt interface{}) {
-			// set to true to not send result to client
-			EventHandler(client, evt, false)
-		})
-	}()
+	SetClient(client)
+}
+
+func SetClient(Client *whatsmeow.Client) {
+	client = Client
+}
+
+func GetClient() *whatsmeow.Client {
+	return client
 }
