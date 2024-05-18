@@ -64,7 +64,7 @@ func (cli *Client) addRecentMessage(to types.JID, id types.MessageID, wa *waProt
 
 func (cli *Client) getRecentMessage(to types.JID, id types.MessageID) RecentMessage {
 	cli.recentMessagesLock.RLock()
-	msg, _ := cli.recentMessagesMap[recentMessageKey{to, id}]
+	msg := cli.recentMessagesMap[recentMessageKey{to, id}]
 	cli.recentMessagesLock.RUnlock()
 	return msg
 }

@@ -72,25 +72,23 @@ func decodeArmadillo(data []byte) (dec events.FBMessage, err error) {
 		var subData *waCommon.SubProtocol
 		switch subProtocol := typedContent.SubProtocol.GetSubProtocol().(type) {
 		case *waMsgApplication.MessageApplication_SubProtocolPayload_ConsumerMessage:
-			dec.Message, err = subProtocol.Decode()
+			dec.Message, _ = subProtocol.Decode()
 		case *waMsgApplication.MessageApplication_SubProtocolPayload_BusinessMessage:
 			dec.Message = (*armadillo.Unsupported_BusinessApplication)(subProtocol.BusinessMessage)
 		case *waMsgApplication.MessageApplication_SubProtocolPayload_PaymentMessage:
 			dec.Message = (*armadillo.Unsupported_PaymentApplication)(subProtocol.PaymentMessage)
 		case *waMsgApplication.MessageApplication_SubProtocolPayload_MultiDevice:
-			dec.Message, err = subProtocol.Decode()
+			dec.Message, _ = subProtocol.Decode()
 		case *waMsgApplication.MessageApplication_SubProtocolPayload_Voip:
 			dec.Message = (*armadillo.Unsupported_Voip)(subProtocol.Voip)
 		case *waMsgApplication.MessageApplication_SubProtocolPayload_Armadillo:
-			dec.Message, err = subProtocol.Decode()
+			dec.Message, _ = subProtocol.Decode()
 		default:
 			return dec, fmt.Errorf("unsupported subprotocol type: %T", subProtocol)
 		}
-		if protoMsg != nil {
-			err = proto.Unmarshal(subData.GetPayload(), protoMsg)
-			if err != nil {
-				return dec, fmt.Errorf("failed to unmarshal application subprotocol payload (%T v%d): %w", protoMsg, subData.GetVersion(), err)
-			}
+		err = proto.Unmarshal(subData.GetPayload(), protoMsg)
+		if err != nil {
+			return dec, fmt.Errorf("failed to unmarshal application subprotocol payload (%T v%d): %w", protoMsg, subData.GetVersion(), err)
 		}
 	default:
 		err = fmt.Errorf("unsupported application payload content type: %T", typedContent)

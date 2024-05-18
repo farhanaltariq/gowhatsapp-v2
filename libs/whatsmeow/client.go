@@ -286,12 +286,12 @@ func (cli *Client) SetProxy(proxy socket.Proxy) {
 	cli.http.Transport.(*http.Transport).Proxy = proxy
 }
 
-func (cli *Client) getSocketWaitChan() <-chan struct{} {
-	cli.socketLock.RLock()
-	ch := cli.socketWait
-	cli.socketLock.RUnlock()
-	return ch
-}
+// func (cli *Client) getSocketWaitChan() <-chan struct{} {
+// 	cli.socketLock.RLock()
+// 	ch := cli.socketWait
+// 	cli.socketLock.RUnlock()
+// 	return ch
+// }
 
 func (cli *Client) closeSocketWaitChan() {
 	cli.socketLock.Lock()
