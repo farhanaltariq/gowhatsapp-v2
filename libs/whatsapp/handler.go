@@ -3,9 +3,11 @@ package whatsapp
 import (
 	"context"
 	"fmt"
+	"os"
 	"sync"
 
 	"github.com/farhanaltariq/fiberplate/libs/aiclient"
+	"github.com/mdp/qrterminal/v3"
 	"github.com/sirupsen/logrus"
 	"go.mau.fi/whatsmeow"
 	"go.mau.fi/whatsmeow/binary/proto"
@@ -101,7 +103,7 @@ func EventHandler(client *whatsmeow.Client, evt interface{}, debug bool) {
 	}
 }
 
-func SendMessage(client *whatsmeow.Client, clientNumber int, msg string) *error {
+func SendMessage(client *whatsmeow.Client, clientNumber int, msg string) error {
 	protoMsg := &proto.Message{
 		ExtendedTextMessage: &proto.ExtendedTextMessage{
 			// text to be sent to the sender
@@ -117,5 +119,46 @@ func SendMessage(client *whatsmeow.Client, clientNumber int, msg string) *error 
 
 	_, err := client.SendMessage(context.Background(), receiver, protoMsg)
 
-	return &err
+	return err
+}
+
+func Logout(client *whatsmeow.Client) error {
+	err := client.Logout()
+	if err != nil {
+		logrus.Errorln("Failed to logout. Doing forceful logout", err)
+		err = client.Store.Delete()
+	}
+	return err
+}
+
+func GenerateQRCode(client *whatsmeow.Client) error {
+	qr, err := client.GetQRChannel(context.Background())
+	if err != nil {
+		logrus.Errorln("Failed to get QR channel first step", err)
+		return err
+	}
+	logrus.Infoln("QR : ", &qr)
+	for evt := range qr {
+		if evt.Event == "code" {
+			// Render the QR code here
+			// e.g. qrterminal.GenerateHalfBlock(evt.Code, qrterminal.L, os.Stdout)
+			// or just manually `echo 2@... | qrencode -t ansiutf8` in a terminal
+			fmt.Println("QR code:", evt.Code)
+
+			// render the QR code and wait for the user to scan it
+			// then continue
+			config := qrterminal.Config{
+				Level:     qrterminal.L,
+				Writer:    os.Stdout,
+				BlackChar: qrterminal.WHITE,
+				WhiteChar: qrterminal.BLACK,
+				QuietZone: 1,
+			}
+			qrterminal.GenerateWithConfig(evt.Code, config)
+			fmt.Println("Scan the QR code above")
+		} else {
+			fmt.Println("Login event:", evt.Event)
+		}
+	}
+	return nil
 }

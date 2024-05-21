@@ -57,7 +57,7 @@ func ConnectDB(client *whatsmeow.Client) error {
 
 func Init() {
 	dbLog := waLog.Stdout("Database", "DEBUG", true)
-	psqlInfo := utils.GetEnv("CRED_DB_DSN", "host=localhost port=5432 user=postgres password=postgres dbname=postgres sslmode=disable")
+	psqlInfo := utils.GetEnv("DB_DSN", "host=localhost port=5432 user=postgres password=postgres dbname=postgres sslmode=disable")
 
 	store, err := sqlstore.New("postgres", psqlInfo, dbLog)
 	if err != nil {

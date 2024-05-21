@@ -10,4 +10,6 @@ func Messages(router fiber.Router, service middleware.Services) {
 	messageController := controllers.NewMessageController(service)
 
 	router.Post("/", messageController.SendMessage)
+	router.Post("/logout", messageController.Logout)
+	router.Get("/qr", messageController.GenerateQR)
 }
