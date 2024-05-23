@@ -10,6 +10,7 @@ import (
 	"github.com/farhanaltariq/fiberplate/database/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
@@ -33,6 +34,10 @@ func FormatMethod(c *fiber.Ctx) string {
 }
 
 func GetEnv(key, fallback string) string {
+
+	godotenv.Load()
+	godotenv.Load("../.env")
+
 	if value := os.Getenv(key); value != "" {
 		return value
 	}

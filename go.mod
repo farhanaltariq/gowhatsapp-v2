@@ -7,6 +7,7 @@ replace go.mau.fi/whatsmeow => ./libs/whatsmeow
 require (
 	github.com/gofiber/fiber/v2 v2.51.0
 	github.com/gofiber/swagger v0.1.14
+	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
 	github.com/mdp/qrterminal/v3 v3.2.0
 	github.com/sirupsen/logrus v1.9.3
