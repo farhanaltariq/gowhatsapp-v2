@@ -53,14 +53,3 @@ func AuthInterceptor(c *fiber.Ctx) error {
 
 	return c.Next()
 }
-
-// SetupCorsMiddleware sets up the CORS middleware for the application
-func SetupCorsMiddleware() fiber.Handler {
-	// CORS middleware configuration
-	return func(c *fiber.Ctx) error {
-		c.Set("Access-Control-Allow-Origin", "*")
-		c.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-		c.Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		return c.Next()
-	}
-}
