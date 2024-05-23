@@ -32,12 +32,7 @@ var (
 func SetupApp() *fiber.App {
 	whatsapp.Init()
 
-	app := fiber.New(
-		fiber.Config{
-			Prefork:           false,
-			ReduceMemoryUsage: true,
-		},
-	)
+	app := fiber.New()
 
 	app.Use(recover.New())
 	app.Get("api/swagger/*", swagger.HandlerDefault)

@@ -9,6 +9,8 @@ import (
 func Init(app *fiber.App) {
 	services := middleware.InitServices()
 
+	app.Use(middleware.SetupCorsMiddleware())
+
 	api := app.Group("/api")
 	api.Get("/", controllers.NewMiscController(services).HealthCheck)
 
